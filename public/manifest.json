@@ -1,0 +1,15 @@
+{
+  "short_name": "BoxDrop",
+  "name": "BoxDrop - Penitipan Barang Online",
+  "icons": [
+    {
+      "src": "public/box (4).png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#10B981",
+  "background_color": "#f9fafb"
+}

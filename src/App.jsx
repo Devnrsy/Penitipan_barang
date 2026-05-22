@@ -1,122 +1,123 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import { useAuth } from './hooks/useAuth';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pages
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Inventory from './pages/Inventory';
+import Profile from './pages/Profile';
+import History from './pages/History';
+import Pengambilan from './pages/Pengambilan';
+
+const PrivateRouter = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? children : <Navigate to="/login" replace />;
+};
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center">
+        <div className="text-[#F3C263] font-black tracking-widest animate-pulse uppercase text-xs">
+          Synchronizing System...
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/" replace /> : <Register />}
+        />
 
-      <div className="ticks"></div>
+        {/* Private Routes */}
+        <Route
+          path="/"
+          element={
+            <PrivateRouter>
+              <Dashboard />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <PrivateRouter>
+              <Inventory />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRouter>
+              <Profile />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <PrivateRouter>
+              <History />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/pengambilan"
+          element={
+            <PrivateRouter>
+              <Pengambilan />
+            </PrivateRouter>
+          }
+        />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function App() {
+  return (
+    <Router>
+      {/* 
+        Container Luar: 
+        - Di desktop: Background hitam pekat.
+        - Di mobile: Background langsung mengikuti warna aplikasi (#1a1a1a).
+      */}
+      <div className="min-h-screen bg-black sm:bg-black flex justify-center items-center">
+        {/* 
+          Frame Utama:
+          - w-full h-screen: Full total di HP.
+          - sm:max-w-[430px] sm:h-[92vh]: Jadi kotak HP kalau dibuka di laptop.
+          - sm:rounded-[3rem]: Lengkungan hanya muncul di laptop.
+        */}
+        <div className="w-full h-screen sm:h-[92vh] sm:max-w-[430px] bg-[#1a1a1a] relative shadow-2xl sm:rounded-[3rem] overflow-hidden sm:border sm:border-white/5">
+          <AnimatedRoutes />
+        </div>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

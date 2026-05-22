@@ -1,1 +1,55 @@
 @import 'tailwindcss';
+
+/* Mengatur default style untuk body di v4 */
+@layer base {
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Jika kamu ingin membuat utility custom yang bisa di-apply */
+@utility btn-primary {
+  background-color: #f3c263;
+  color: black;
+  font-weight: bold;
+  border-radius: 0.5rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+/* Di index.css */
+.bg-dashed-gradient {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.3) 40%,
+    rgba(255, 255, 255, 0) 0%
+  );
+  background-position: bottom;
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+}
